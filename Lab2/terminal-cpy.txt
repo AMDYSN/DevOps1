@@ -1,0 +1,169 @@
+ahmed@MOONFISH:~/Desktop/DevOps$ mkdir Lab2
+ahmed@MOONFISH:~/Desktop/DevOps$ cd Lab2
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube start
+😄  minikube v1.38.1 on Linuxmint 22.3
+✨  Using the docker driver based on existing profile
+👍  Starting "minikube" primary control-plane node in "minikube" cluster
+🚜  Pulling base image v0.0.50 ...
+🎉  minikube 1.39.0 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.39.0
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
+
+🔄  Restarting existing docker container for "minikube" ...
+🐳  Preparing Kubernetes v1.35.1 on Docker 29.2.1 ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+💡  kubectl not found. If you need it, try: 'minikube kubectl -- get pods -A'
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ touch app.py
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ code app.py
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ touch Dockerfile
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ code Dockerfile
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube docker-env
+export DOCKER_TLS_VERIFY="1"
+export DOCKER_HOST="tcp://192.168.49.2:2376"
+export DOCKER_CERT_PATH="/home/ahmed/.minikube/certs"
+export MINIKUBE_ACTIVE_DOCKERD="minikube"
+
+# To point your shell to minikube's docker-daemon, run:
+# eval $(minikube -p minikube docker-env)
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ eval $(minikube docker-env)
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ docker build -t flask-app
+ERROR: docker: 'docker buildx build' requires 1 argument
+
+Usage:  docker buildx build [OPTIONS] PATH | URL | -
+
+Run 'docker buildx build --help' for more information
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ docker build -t flask-app .
+[+] Building 47.1s (9/9) FINISHED                                                                      docker:default
+ => [internal] load build definition from Dockerfile                                                             0.0s
+ => => transferring dockerfile: 129B                                                                             0.0s
+ => [internal] load metadata for docker.io/library/python:3.8-slim                                               6.1s
+ => [internal] load .dockerignore                                                                                0.0s
+ => => transferring context: 2B                                                                                  0.0s
+ => [1/4] FROM docker.io/library/python:3.8-slim@sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382  25.9s
+ => => resolve docker.io/library/python:3.8-slim@sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382f  0.0s
+ => => sha256:a3f1dfe736c5f959143f23d75ab522a60be2da902efac236f4fb2a153cc14a5d 14.53MB / 14.53MB                25.0s
+ => => sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382f29c5a613f 10.41kB / 10.41kB                 0.0s
+ => => sha256:314bc2fb0714b7807bf5699c98f0c73817e579799f2d91567ab7e9510f5601a5 1.75kB / 1.75kB                   0.0s
+ => => sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3 5.25kB / 5.25kB                   0.0s
+ => => sha256:302e3ee498053a7b5332ac79e8efebec16e900289fc1ecd1c754ce8fa047fcab 29.13MB / 29.13MB                23.0s
+ => => sha256:030d7bdc20a63e3d22192b292d006a69fa3333949f536d62865d1bd0506685cc 3.51MB / 3.51MB                   3.7s
+ => => sha256:3971691a363796c39467aae4cdce6ef773273fe6bfc67154d01e1b589befb912 248B / 248B                       4.2s
+ => => extracting sha256:302e3ee498053a7b5332ac79e8efebec16e900289fc1ecd1c754ce8fa047fcab                        1.3s
+ => => extracting sha256:030d7bdc20a63e3d22192b292d006a69fa3333949f536d62865d1bd0506685cc                        0.1s
+ => => extracting sha256:a3f1dfe736c5f959143f23d75ab522a60be2da902efac236f4fb2a153cc14a5d                        0.6s
+ => => extracting sha256:3971691a363796c39467aae4cdce6ef773273fe6bfc67154d01e1b589befb912                        0.0s
+ => [internal] load build context                                                                                0.0s
+ => => transferring context: 353B                                                                                0.0s
+ => [2/4] WORKDIR /app                                                                                           3.7s
+ => [3/4] COPY . /app                                                                                            0.0s
+ => [4/4] RUN pip install flask                                                                                 10.9s
+ => exporting to image                                                                                           0.2s 
+ => => exporting layers                                                                                          0.2s 
+ => => writing image sha256:5ab0b1e2519a624ca6c76564e4b729588bc29eae94fc14810480313e66349263                     0.0s 
+ => => naming to docker.io/library/flask-app                                                                     0.0s 
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ touch flask-deployment.yaml
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ code flask-deployment.yaml 
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ kubectl apply -f flask-deployment.yaml 
+Command 'kubectl' not found, but can be installed with:
+sudo snap install kubectl
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl apply -f flask-deployment.yaml 
+Error: unknown shorthand flag: 'f' in -f
+See 'minikube kubectl --help' for usage.
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl apply flask-deployment.yaml 
+error: Unexpected args: [flask-deployment.yaml]
+See 'kubectl apply -h' for help and examples
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl apply -h
+Run the Kubernetes client, download it if necessary. Remember -- after kubectl!
+
+This will run the Kubernetes client (kubectl) with the same version as the cluster
+
+Normally it will download a binary matching the host operating system and architecture,
+but optionally you can also run it directly on the control plane over the ssh connection.
+This can be useful if you cannot run kubectl locally for some reason, like unsupported
+host. Please be aware that when using --ssh all paths will apply to the remote machine.
+
+Examples:
+minikube kubectl -- --help
+minikube kubectl -- get pods --namespace kube-system
+
+Options:
+    --ssh=false:
+	Use SSH for running kubernetes client on the node
+
+Usage:
+  minikube kubectl [flags] [options]
+
+Use "minikube options" for a list of global command-line options (applies to all commands).
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl --apply -f flask-deployment.yaml 
+Error: unknown flag: --apply
+See 'minikube kubectl --help' for usage.
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- apply -f flask-deployment.yaml 
+deployment.apps/flask-app created
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- get deployments
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+flask-app   1/1     1            1           35s
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- get pods -l app=flask-app
+NAME                         READY   STATUS    RESTARTS   AGE
+flask-app-6d58f88547-dz7nn   1/1     Running   0          55s
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- describe deployment flask-app
+Name:                   flask-app
+Namespace:              default
+CreationTimestamp:      Wed, 09 Sep 2026 10:47:19 +0530
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=flask-app
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=flask-app
+  Containers:
+   flask-app:
+    Image:         flask-app:latest
+    Port:          15000/TCP
+    Host Port:     0/TCP
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   flask-app-6d58f88547 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  90s   deployment-controller  Scaled up replica set flask-app-6d58f88547 from 0 to 1
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- logs flask-app-6d58f88547-dz7nn
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:15000
+ * Running on http://10.244.0.11:15000
+Press CTRL+C to quit
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- get sevices
+error: the server doesn't have a resource type "sevices"
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- get services
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+hello-k8s    NodePort    10.103.200.68   <none>        80:32388/TCP   17d
+kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP        17d
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ curl http://127.0.0.1:15000
+curl: (7) Failed to connect to 127.0.0.1 port 15000 after 0 ms: Couldn't connect to server
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube kubectl -- apply -f flask-deployment.yaml 
+deployment.apps/flask-app unchanged
+service/flask-app-service created
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ curl http://127.0.0.1:15000
+curl: (7) Failed to connect to 127.0.0.1 port 15000 after 0 ms: Couldn't connect to server
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ minikube service flask-app-service --url
+http://192.168.49.2:32078
+ahmed@MOONFISH:~/Desktop/DevOps/Lab2$ 
+
+
