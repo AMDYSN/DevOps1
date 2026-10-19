@@ -90,12 +90,12 @@ def about():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)  # Specify the port number here
+    app.run(host="0.0.0.0", port=5001)
 ```
 
 ## Requirements: Save this as requirements.txt
 ```
-Flask==2.0.1
+Flask==3.0.3
 ```
 
 ## Dockerfile
@@ -107,12 +107,14 @@ FROM python:3.9-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file and app code to the container
+# Copy the requirements file to the container
 COPY requirements.txt .
-COPY app.py .
 
 # Install Flask (and any other dependencies you might have)
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the app code to the container
+COPY app.py .
 
 # Expose the port the app runs on
 EXPOSE 5001
@@ -134,7 +136,7 @@ Step 1/5 : FROM python:3.9-slim
 ## Launch the containers: (-d denotes dettach mode i.e. container runs in background)
 
 ```
-    docker run -d --name mysql --net=my-bridge-net mysql:latest
+    docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=secret --net=my-bridge-net mysql:latest
     docker run -d --name redis --net=my-bridge-net redis:latest
     docker run -d --name flask --net=my-bridge-net -p 5001:5001 flask-api
 ```
@@ -154,10 +156,16 @@ Exec into the Flask container:
 docker exec -it flask bash
 ```
 
+Install ping inside the container (`python:3.9-slim` does not include it):
+
+```
+apt-get update && apt-get install -y iputils-ping
+```
+
 Ping the MySQL container:
 
 ```
-ping mysql
+ping -c 3 mysql
 ```
 
 Output:
@@ -169,7 +177,7 @@ PING mysql (172.18.0.2) 56(84) bytes of data.
 # Ping the Redis container:
 
 ```
-ping redis
+ping -c 3 redis
 ```
 
 Output:
@@ -179,10 +187,16 @@ PING redis (172.18.0.3) 56(84) bytes of data.
 
 ### Task 6: Clean up
 
-Stop and remove containers:
+Stop the containers:
 
 ```
-docker stop mysql redis flask && docker rm mysql redis flask
+docker stop mysql redis flask
+```
+
+# Remove the containers
+
+```
+docker rm mysql redis flask
 ```
 
 # Remove the network
