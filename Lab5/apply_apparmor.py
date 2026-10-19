@@ -1,0 +1,22 @@
+import docker
+ 
+client = docker.from_env()
+ 
+# Build the Docker image
+client.images.build(path=".", tag="flask-apparmor")
+ 
+# Run the container with the AppArmor profile
+container = client.containers.run(
+    "flask-apparmor",
+    ports={'5000/tcp': 5000},
+    security_opt=["apparmor=my-apparmor-profile"],
+    detach=True
+)
+print(f"Container started: {container.short_id}")
+ 
+# Verify AppArmor profile applied
+info = client.api.inspect_container(container.id)
+print(f"AppArmor profile applied: {info['HostConfig']['SecurityOpt']}")
+ 
+container.stop()
+
