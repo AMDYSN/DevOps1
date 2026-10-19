@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Creating virtual environment and installing dependencies...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                dir('Lab9') {
+                    sh 'python3 -m unittest discover -s .'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                sh '''
+                mkdir -p ${WORKSPACE}/Lab9/python-app-deploy
+                cp ${WORKSPACE}/Lab9/app.py ${WORKSPACE}/Lab9/python-app-deploy/
+                '''
+            }
+        }
+        stage('Run Application') {
+            steps {
+                echo 'Running application...'
+                sh '''
+                nohup python3 ${WORKSPACE}/Lab9/python-app-deploy/app.py > ${WORKSPACE}/Lab9/python-app-deploy/app.log 2>&1 &
+                echo $! > ${WORKSPACE}/Lab9/python-app-deploy/app.pid
+                '''
+            }
+        }
+        stage('Test Application') {
+            steps {
+                echo 'Testing application...'
+                sh '''
+                cd ${WORKSPACE}/Lab9
+                python3 test_app.py
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for more details.'
+        }
+    }
+}
